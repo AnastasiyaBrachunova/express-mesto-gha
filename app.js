@@ -16,6 +16,15 @@ mongoose.connect('mongodb://localhost:27017/mestodb')
 app.use(express.json())
 app.use(express.static(path.join(__dirname,"public")))
 app.use('/', usersRouter);
+
+app.use((req, res, next) => { // мидлвэр из задания практикума
+  req.user = {
+    _id: '62fa33088aea7c49585cd07e' // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
 // app.get('/', (req, res)=>{
 //   res.send('hello')
 // }) //при гет запросе на / будет выполняться коллбэк
