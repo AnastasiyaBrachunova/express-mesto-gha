@@ -45,11 +45,12 @@ const getUser = (req, res) => {
 };
 
 const getUsers = (req, res) => {
-  return user.find({}).then((users) => res.status(200).send(users))
-  .catch((error) => {
-        res.status(500).send({ message: `Internal server error ${error}` });
-    }
-  );
+  return user
+    .find({})
+    .then((users) => res.status(200).send(users))
+    .catch((error) => {
+      res.status(500).send({ message: `Internal server error ${error}` });
+    });
 };
 
 module.exports = { createUser, getUser, getUsers };
