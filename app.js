@@ -20,9 +20,8 @@ app.use(express.json({ type: '*/*' }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62fd5a1917dd7601e4b08312',
+    _id: '62fd5a1917dd7601e4b08312'
   };
-
   next();
 });
 
