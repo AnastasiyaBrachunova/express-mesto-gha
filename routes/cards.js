@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const {
-  changeUserInfo,
-  changeAvatar,
+
   likeCard,
   dislikeCard,
   getCards,
@@ -11,12 +10,8 @@ const {
 
 router.get("/cards", getCards); // возвращает все карточки
 router.post("/cards", createCards); // создает карточку
-router.delete("/cards/:cardId", deleteCard); // удаляеn карточку по айди
-
-router.patch("/users/me", changeUserInfo); // обновление профиля
-router.patch("/users/me/avatar", changeAvatar); // бновление аватара
-
-router.put("/cards/:id/likes", likeCard); // лайк карточки
+router.delete("/cards/:id", deleteCard); // удаляеn карточку по айди
+router.put("/cards/:cardId/likes", likeCard); // лайк карточки
 router.delete("/cards/:cardId/likes", dislikeCard); // дизлайк карточки
 
 module.exports = router;

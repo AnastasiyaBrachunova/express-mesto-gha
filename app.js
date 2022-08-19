@@ -14,18 +14,24 @@ mongoose.connect('mongodb://localhost:27017/mestodb')
 //     useFindAndModify: false
 // });  //логику взаимодействия MongoDB с Mongoose сейчас переписывают, и мы указываем эти опции, чтобы приложение вскоре не сломалось.
 
-app.use(express.json({ type: '*/*' })); // app.use(express.static(path.join(__dirname,"public")))
-app.use('/', usersRouter);
-app.use('/', cardsRouter);
 
+
+app.use(express.json({ type: '*/*' }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62fd57e77c6c46bfe1b3c490',
+    _id: '62fd5a1917dd7601e4b08312',
   };
 
   next();
 });
+
+// app.use(express.static(path.join(__dirname,"public")))
+app.use('/', usersRouter);
+app.use('/', cardsRouter);
+
+
+
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

@@ -1,4 +1,4 @@
-const user = require("../models/user");
+const User = require("../models/user");
 
 class AplicationError extends Error {
   constructor(status = 500, message = "Internal Error") {
@@ -16,7 +16,7 @@ class UserNotFound extends AplicationError {
 }
 
 const createUser = (req, res) => {
-  return user
+  return User
     .create(req.body)
     .then((user) => res.status(201).send(user))
     .catch((error) => {
@@ -29,7 +29,7 @@ const createUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  return user
+  return User
     .findById(req.params.id)
     .orFail(() => {
       throw new UserNotFound();
@@ -45,7 +45,7 @@ const getUser = (req, res) => {
 };
 
 const getUsers = (req, res) => {
-  return user
+  return User
     .find({})
     .then((users) => res.status(200).send(users))
     .catch((error) => {
@@ -53,4 +53,24 @@ const getUsers = (req, res) => {
     });
 };
 
-module.exports = { createUser, getUser, getUsers };
+const changeUserInfo = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, about })
+  .then((user) => res.status(200).send(user))
+  .catch((error) => {
+    res.status(500).send({ message: `Internal server error ${error}` });
+  });
+}
+
+const changeAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, { avatar })
+  .then((avatar) => res.status(200).send(avatar))
+  .catch((error) => {
+    res.status(500).send({ message: `Internal server error ${error}` });
+  });
+
+};
+
+
+module.exports = { createUser, getUser, getUsers, changeUserInfo, changeAvatar };
