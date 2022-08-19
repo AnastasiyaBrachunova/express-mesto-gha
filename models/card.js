@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -14,8 +14,8 @@ const cardSchema = new mongoose.Schema({
       validator(url) {
         const urlRegex = /https?:\/\/\S+\.\S+/gm;
         return urlRegex.test(url);
-      }
-    }
+      },
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,9 +23,9 @@ const cardSchema = new mongoose.Schema({
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
-    default: []
+    default: [],
   }],
-  createdAt : {
+  createdAt: {
     type: Date,
     default: Date.now,
   },

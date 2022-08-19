@@ -6,13 +6,14 @@
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "lint": "npx eslint .",
-      "dev": "nodemon app.js"
+      "dev": "nodemon app.js",
+      "start": "node app.js"
    },
    "repository": {
       "type": "git",
       "url": "git+https://github.com/AnastasiyaBrachunova/express-mesto-gha.git"
    },
-   "author": "",
+   "author": "Brachunova Anastasiya",
    "license": "ISC",
    "dependencies": {
       "body-parser": "^1.20.0",
