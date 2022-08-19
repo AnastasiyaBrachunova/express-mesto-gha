@@ -24,11 +24,12 @@ const createUser = (req, res) => User.create(req.body)
 //     }
 //   });
 const getUser = (req, res, next) => User.findById(req.params._id)
-  .then((user) => res.send({ data: user }))
+  .then((user) => res.status(200).res.send(user))
   .catch((err) => {
-    if (err) {
+    if (err === 'ValidatorError') {
       return next(err);
     }
+    res.status(500).send({ message: `Internal server error ${err}` });
   });
 
 const getUsers = (req, res) => User.find({})
