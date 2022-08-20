@@ -13,7 +13,9 @@ const createUser = (req, res) => User.create(req.body)
 
 // const getUser = (req, res) => User.findById(req.params.id)
 //   .orFail(() => {
-//     throw new UserNotFound();
+//     const error = new Error();
+//     error.statusCode = 404;
+//     throw error;
 //   })
 //   .then((user) => res.status(200).send(user))
 //   .catch((error) => {
@@ -23,30 +25,30 @@ const createUser = (req, res) => User.create(req.body)
 //       res.status(500).send({ message: `Пользователь с указанным _id не найден ${error}` });
 //     }
 //   });
-const getUser = (req, res) => User.findById(req.params._id)
+const getUser = (req, res) => User.findById(req.params.id)
   .orFail(() => {
-    const error = new Error('Пользователь с указанным _id не найден');
+    const error = new Error();
     error.statusCode = 404;
     throw error;
   })
-  .then((user) => res.status(200).res.send(user))
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err}` });
-    } else if (err.statusCode === 404) {
-      res.status(err.status).send(err);
+  .then((user) => res.status(200).send(user))
+  .catch((error) => {
+    if (error.name === 'CastError') {
+      res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${error}` });
+    } else if (error.statusCode === 404) {
+      res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
     } else {
-      res.status(500).send({ message: `Internal server error ${err}` });
+      res.status(500).send({ message: `Internal server error ${error}` });
     }
   });
 
 const getUsers = (req, res) => User.find({})
   .then((users) => res.status(200).send(users))
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      res.status(400).send({ message: `Переданы некорректные данные при запросе пользователя ${err}` });
+  .catch((error) => {
+    if (error.name === 'CastError') {
+      res.status(400).send({ message: `Переданы некорректные данные при запросе пользователя ${error}` });
     } else {
-      res.status(500).send({ message: `Internal server error ${err}` });
+      res.status(500).send({ message: `Internal server error ${error}` });
     }
   });
 
@@ -54,13 +56,13 @@ const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidatorError') {
-        res.status(400).send({ message: `Переданы некорректные данные при обновлении пользователя ${err}` });
-      } else if (err.statusCode === 404) {
-        res.status(err.status).sendsend({ message: `Пользователь с указанным _id не найден ${err}` });
+    .catch((error) => {
+      if (error.name === 'ValidatorError') {
+        res.status(400).send({ message: `Переданы некорректные данные при обновлении пользователя ${error}` });
+      } else if (error.statusCode === 404) {
+        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
-        res.status(500).send({ message: `Internal server error ${err}` });
+        res.status(500).send({ message: `Internal server error ${error}` });
       }
     });
 };
@@ -74,13 +76,13 @@ const changeAvatar = (req, res) => {
       throw error;
     })
     .then((ava) => res.status(200).send(ava))
-    .catch((err) => {
-      if (err.name === 'ValidatorError') {
-        res.status(400).send({ message: `Переданы некорректные данные при обновлении аватара ${err}` });
-      } else if (err.statusCode === 404) {
-        res.status(err.status).sendsend({ message: `Пользователь с указанным _id не найден ${err}` });
+    .catch((error) => {
+      if (error.name === 'ValidatorError') {
+        res.status(400).send({ message: `Переданы некорректные данные при обновлении аватара ${error}` });
+      } else if (error.statusCode === 404) {
+        res.status(error.statusCode).sendsend({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
-        res.status(500).send({ message: `Internal server error ${err}` });
+        res.status(500).send({ message: `Internal server error ${error}` });
       }
     });
 };
