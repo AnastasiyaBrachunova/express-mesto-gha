@@ -50,7 +50,11 @@ const likeCard = (req, res) => {
   )
     .then((like) => res.send(like))
     .catch((error) => {
-      res.status(500).send({ message: `Internal server error ${error}` });
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: `Переданы некорректные данные для лайка карточки ${error}` });
+      } else {
+        res.status(500).send({ message: `Internal server error ${error}` });
+      }
     });
 };
 
