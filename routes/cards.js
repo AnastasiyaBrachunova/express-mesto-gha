@@ -10,7 +10,7 @@ const {
 
 router.get('/cards', getCards); // возвращает все карточки
 router.post('/cards', createCards); // создает карточку
-router.delete('/cards/:id', deleteCard); // удаляеn карточку по айди
+router.delete('/cards/:cardId', deleteCard); // удаляеn карточку по айди
 router.put('/cards/:cardId/likes', likeCard); // лайк карточки
 router.delete('/cards/:cardId/likes', dislikeCard); // дизлайк карточки
 

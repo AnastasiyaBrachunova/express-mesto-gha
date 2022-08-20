@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
+    validate: {
+      validator(url) {
+        const urlRegex = /https?:\/\/\S+\.\S+/gm;
+        return urlRegex.test(url);
+      },
+    },
   },
   // validate: {
   //   validator(url) {

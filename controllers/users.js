@@ -54,13 +54,18 @@ const getUsers = (req, res) => User.find({})
 
 const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about })
-    .then((user) => res.status(200).send(user))
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((users) => res.status(200).send(users))
     .catch((error) => {
       if (error.name === 'ValidatorError') {
-        res.status(400).send({ message: `Переданы некорректные данные при обновлении пользователя ${error}` });
+        res.status(400).send({ message: `Переданы некорректные данные при обновлении аватара ${error}` });
       } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
+        res.status(error.statusCode).sendsend({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
@@ -69,7 +74,7 @@ const changeUserInfo = (req, res) => {
 
 const changeAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new Error();
       error.statusCode = 404;

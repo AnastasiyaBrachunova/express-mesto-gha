@@ -27,7 +27,7 @@ const createCards = (req, res) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: `Error validating card ${error}` });
+        res.status(400).send({ message: `Переданы некорректные данные при создании карточки ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
