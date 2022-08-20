@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // validate: {
+  //   validator(url) {
+  //     const urlRegex = /https?:\/\/\S+\.\S+/gm;
+  //     return urlRegex.test(url);
+  //   },
+  // },
 });
 
 module.exports = mongoose.model('user', userSchema);
