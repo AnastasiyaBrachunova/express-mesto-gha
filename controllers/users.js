@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const User = require('../models/user');
 
 const createUser = (req, res) => User.create(req.body)

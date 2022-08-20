@@ -34,14 +34,6 @@ const createCards = (req, res) => {
     });
 };
 
-const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then((card) => res.status(200).send(card))
-    .catch((error) => {
-      res.status(500).send({ message: `Internal server error ${error}` });
-    });
-};
-
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -58,7 +50,7 @@ const likeCard = (req, res) => {
       if (error.name === 'CastError') {
         res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
       } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
+        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
@@ -81,7 +73,27 @@ const dislikeCard = (req, res) => {
       if (error.name === 'CastError') {
         res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
       } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
+        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
+      } else {
+        res.status(500).send({ message: `Internal server error ${error}` });
+      }
+    });
+};
+
+const deleteCard = (req, res) => {
+  const { cardId } = req.params;
+  Card.findByIdAndRemove(cardId)
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((card) => res.status(200).send({ message: `Карточка c ${card.id} успешно удалена` }))
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Переданы некорректный id для удаления карточки ${error}` });
+      } else if (error.statusCode === 404) {
+        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
