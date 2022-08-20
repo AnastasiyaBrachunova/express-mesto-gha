@@ -20,7 +20,7 @@ const createUser = (req, res) => User.create(req.body)
 //     if (error.name === 'ValidatorError') {
 //       res.status(error.status).send(error);
 //     } else {
-//       res.status(500).send({ message: `Internal server error ${error}` });
+//       res.status(500).send({ message: `Пользователь с указанным _id не найден ${error}` });
 //     }
 //   });
 const getUser = (req, res) => User.findById(req.params._id)
@@ -33,33 +33,55 @@ const getUser = (req, res) => User.findById(req.params._id)
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err}` });
+    } else if (err.statusCode === 404) {
+      res.status(err.status).send(err);
     } else {
       res.status(500).send({ message: `Internal server error ${err}` });
     }
   });
 
 const getUsers = (req, res) => User.find({})
-
   .then((users) => res.status(200).send(users))
-  .catch((error) => {
-    res.status(500).send({ message: `Internayl server error ${error}` });
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: `Переданы некорректные данные при запросе пользователя ${err}` });
+    } else {
+      res.status(500).send({ message: `Internal server error ${err}` });
+    }
   });
 
 const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => res.status(200).send(user))
-    .catch((error) => {
-      res.status(500).send({ message: `Internal server error ${error}` });
+    .catch((err) => {
+      if (err.name === 'ValidatorError') {
+        res.status(400).send({ message: `Переданы некорректные данные при обновлении пользователя ${err}` });
+      } else if (err.statusCode === 404) {
+        res.status(err.status).sendsend({ message: `Пользователь с указанным _id не найден ${err}` });
+      } else {
+        res.status(500).send({ message: `Internal server error ${err}` });
+      }
     });
 };
 
 const changeAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar })
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
     .then((ava) => res.status(200).send(ava))
-    .catch((error) => {
-      res.status(500).send({ message: `Internal server error ${error}` });
+    .catch((err) => {
+      if (err.name === 'ValidatorError') {
+        res.status(400).send({ message: `Переданы некорректные данные при обновлении аватара ${err}` });
+      } else if (err.statusCode === 404) {
+        res.status(err.status).sendsend({ message: `Пользователь с указанным _id не найден ${err}` });
+      } else {
+        res.status(500).send({ message: `Internal server error ${err}` });
+      }
     });
 };
 
