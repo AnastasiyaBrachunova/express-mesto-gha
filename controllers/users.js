@@ -65,7 +65,7 @@ const changeUserInfo = (req, res) => {
       if (error.name === 'ValidationError') {
         res.status(400).send({ message: `Переданы некорректные данные при обновлении данных пользователя ${error}` });
       } else if (error.statusCode === 404) {
-        res.status(error.statusCode).sendsend({ message: `Пользователь с указанным _id не найден ${error}` });
+        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
@@ -85,7 +85,7 @@ const changeAvatar = (req, res) => {
       if (error.name === 'ValidationError') {
         res.status(400).send({ message: `Переданы некорректные данные при обновлении аватара ${error}` });
       } else if (error.statusCode === 404) {
-        res.status(error.statusCode).sendsend({ message: `Пользователь с указанным _id не найден ${error}` });
+        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }

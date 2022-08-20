@@ -46,12 +46,19 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
     .then((like) => res.send(like))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        res.status(400).send({ message: `Переданы некорректные данные для лайка карточки ${error}` });
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
+      } else if (error.statusCode === 404) {
+        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
       } else {
         res.status(500).send({ message: `Internal server error ${error}` });
       }
@@ -62,11 +69,22 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
+    { new: true, runValidators: true },
   )
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
     .then((like) => res.send(like))
     .catch((error) => {
-      res.status(500).send({ message: `Internal server error ${error}` });
+      if (error.name === 'CastError') {
+        res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
+      } else if (error.statusCode === 404) {
+        res.status(error.statusCode).send({ message: `Пользователь с указанным _id не найден ${error}` });
+      } else {
+        res.status(500).send({ message: `Internal server error ${error}` });
+      }
     });
 };
 
