@@ -1,22 +1,9 @@
 const Card = require('../models/card'); // экспортироали модель карточки
 
-// class AplicationError extends Error {
-//   constructor(status = 500, message = 'Internal Error') {
-//     super();
-//     this.status = status;
-//     this.name = this.constructor.name;
-//     this.message = message;
-//   }
-// }
-
-// class CardNotFound extends AplicationError {
-//   constructor() {
-//     super(404, 'Card not found');
-//   }
-// }
+const { BAD_REQUEST, ERROR_NOTFOUND, SERVER_ERROR } = require('../utils/constants');
 
 const getCards = (req, res) => Card.find({})
-  .then((cards) => res.status(200).send({ data: cards }))
+  .then((cards) => res.send({ data: cards }))
   .catch((error) => {
     res.status(500).send({ message: `Internal server error ${error}` });
   });
@@ -27,9 +14,9 @@ const createCards = (req, res) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: `Переданы некорректные данные при создании карточки ${error}` });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' });
       } else {
-        res.status(500).send({ message: `Internal server error ${error}` });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -48,11 +35,11 @@ const likeCard = (req, res) => {
     .then((like) => res.send(like))
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
-      } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для лайка' });
+      } else if (error.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(500).send({ message: `Internal server error ${error}` });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -71,11 +58,11 @@ const dislikeCard = (req, res) => {
     .then((like) => res.send(like))
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: `Переданы некорректные данные для лайка ${error}` });
-      } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для дизлайка' });
+      } else if (error.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(500).send({ message: `Internal server error ${error}` });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -88,14 +75,14 @@ const deleteCard = (req, res) => {
       error.statusCode = 404;
       throw error;
     })
-    .then((card) => res.status(200).send({ message: `Карточка c ${card.id} успешно удалена` }))
+    .then((card) => res.send({ message: `Карточка c ${card.id} успешно удалена` }))
     .catch((error) => {
       if (error.name === 'CastError') {
-        res.status(400).send({ message: `Переданы некорректный id для удаления карточки ${error}` });
-      } else if (error.statusCode === 404) {
-        res.status(error.statusCode).send({ message: `Карточка с указанным _id не найдена ${error}` });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для удаления' });
+      } else if (error.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(500).send({ message: `Internal server error ${error}` });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };

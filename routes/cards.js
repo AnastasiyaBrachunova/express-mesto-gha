@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const {
-
   likeCard,
   dislikeCard,
   getCards,
