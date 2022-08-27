@@ -5,12 +5,15 @@ const {
   getUsers,
   changeUserInfo,
   changeAvatar,
+  login,
 } = require('../controllers/users');
 
 router.get('/users', getUsers); // получение всех пользователей
 router.get('/users/:id', getUser); // получение информации пользователя по айди
-router.post('/users', createUser); // создание пользователя
+// router.post('/users', createUser); // создание пользователя
 router.patch('/users/me', changeUserInfo); // обновление профиля
 router.patch('/users/me/avatar', changeAvatar); // бновление аватара
+router.post('/signin', login);
+router.post('/signup', createUser);
 
 module.exports = router;
