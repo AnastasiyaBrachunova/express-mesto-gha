@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express'); // импортировали экспресс
 
 const auth = require('./middlewares/auth');
-
+const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 
 const cardsRouter = require('./routes/cards');
@@ -21,8 +21,9 @@ app.use((req, res, next) => {
   };
   next();
 });
-app.use(auth);
 
+app.use('/', authRouter);
+app.use(auth);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 

@@ -74,6 +74,26 @@ const getUser = async (req, res) => {
     });
 };
 
+const getCurrentUser = (req, res) => {
+  const userId = req.user._id;
+  User.findById(userId)
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для получения пользователя' });
+      } else if (error.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({ message: 'Пользователь с указанным _id не найден' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+      }
+    });
+};
+
 const getUsers = (req, res) => User.find({})
   .then((users) => res.send(users))
   .catch((error) => {
@@ -86,7 +106,7 @@ const getUsers = (req, res) => User.find({})
 
 const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(c, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate({ name, about }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new Error();
       error.statusCode = 404;
@@ -131,4 +151,5 @@ module.exports = {
   changeUserInfo,
   changeAvatar,
   login,
+  getCurrentUser,
 };
