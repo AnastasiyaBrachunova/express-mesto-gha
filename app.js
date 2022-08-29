@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const express = require('express'); // импортировали экспресс
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
+
 const auth = require('./middlewares/auth');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
@@ -22,6 +24,8 @@ app.use('/', authRouter); // здесь роуты signup/signin
 app.use(auth);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
+
+app.use(errors());
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

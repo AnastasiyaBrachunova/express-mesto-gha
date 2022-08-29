@@ -1,10 +1,16 @@
 const router = require('express').Router();
+
 const {
   createUser,
   login,
 } = require('../controllers/users');
 
-router.post('/signup', createUser);
-router.post('/signin', login);
+const {
+  validateCreateUser,
+  validateLogin,
+} = require('../error/validatorJoi');
+
+router.post('/signup', validateCreateUser, createUser);
+router.post('/signin', validateLogin, login);
 
 module.exports = router;
