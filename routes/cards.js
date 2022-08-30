@@ -11,7 +11,7 @@ const {
 const {
   validateСreateCards,
   validateGetCardId,
-} = require('../error/validatorJoi');
+} = require('../errors/validatorJoi');
 
 router.get('/cards', getCards); // возвращает все карточки
 router.post('/cards', validateСreateCards, createCards); // создает карточку

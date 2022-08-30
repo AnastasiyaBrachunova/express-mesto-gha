@@ -12,7 +12,7 @@ const {
   validateGetUsers,
   validateChangeUserInfo,
   validateChangeAvatar,
-} = require('../error/validatorJoi');
+} = require('../errors/validatorJoi');
 
 router.get('/users', validateGetUsers, getUsers); // показать всех пользователей
 router.get('/users/me', getCurrentUser); // получить авторизованного пользователя

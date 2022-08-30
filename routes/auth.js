@@ -8,7 +8,7 @@ const {
 const {
   validateCreateUser,
   validateLogin,
-} = require('../error/validatorJoi');
+} = require('../errors/validatorJoi');
 
 router.post('/signup', validateCreateUser, createUser);
 router.post('/signin', validateLogin, login);
