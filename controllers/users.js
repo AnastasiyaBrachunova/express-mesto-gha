@@ -6,6 +6,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
+const AuthorizationError = require('../errors/ServerError');
 
 const SALT_ROUNDS = 10;
 
@@ -60,7 +61,7 @@ const createUser = (req, res, next) => { // создание пользоват�
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then(() => res.status(201).send({ message: `Пользователь ${email} успешно создан!` }))
+    .then(() => res.status(201).send({ message: 'Пользователь успешно создан!' }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
@@ -85,8 +86,8 @@ const login = (req, res, next) => { // авторизация(получение
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
-      } else if (error.code === 11000) {
-        res.status(409).send({ message: 'Такой пользователь уже существует' });
+      } else if (error.code === 401) {
+        next(new AuthorizationError('Ошибка авторизации'));
       } else {
         next(new ServerError('Внутренняя ошибка сервера'));
       }

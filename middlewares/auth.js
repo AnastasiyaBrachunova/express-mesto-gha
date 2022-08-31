@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
   if (!req.cookies.jwt) {
     return res
