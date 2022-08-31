@@ -3,12 +3,9 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-const { BAD_REQUEST, ERROR_NOTFOUND, SERVER_ERROR } = require('../utils/constants');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
-
-
 
 const SALT_ROUNDS = 10;
 
@@ -29,7 +26,7 @@ const getCurrentUser = (req, res, next) => { // получение текуще�
       } else if (err.message === 'NotFound') {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        next(err);
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
@@ -47,7 +44,7 @@ const getUser = (req, res, next) => { // получение пользовате
       } else if (err.message === 'NotFound') {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        next(err);
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
@@ -56,7 +53,9 @@ const createUser = (req, res, next) => { // создание пользоват�
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) return res.status(BAD_REQUEST).send({ message: 'Email или пароль не могут быть пустыми' });
+  if (!email || !password) {
+    next(new BadRequest('Email или пароль не могут быть пустыми'));
+  }
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -68,7 +67,7 @@ const createUser = (req, res, next) => { // создание пользоват�
       } else if (error.code === 11000) {
         res.status(409).send({ message: 'Такой пользователь уже существует' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
@@ -89,7 +88,7 @@ const login = (req, res, next) => { // авторизация(получение
       } else if (error.code === 11000) {
         res.status(409).send({ message: 'Такой пользователь уже существует' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
@@ -106,10 +105,10 @@ const changeUserInfo = (req, res, next) => { // изменение информ�
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении данных пользователя'));
-      } else if (error.statusCode === ERROR_NOTFOUND) {
+      } else if (error.statusCode === 404) {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
@@ -126,10 +125,10 @@ const changeAvatar = (req, res, next) => { // изменение аватара
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
-      } else if (error.statusCode === ERROR_NOTFOUND) {
+      } else if (error.statusCode === 404) {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(new ServerError('Внутренняя ошибка сервера'));
       }
     });
 };
