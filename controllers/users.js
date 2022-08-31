@@ -32,23 +32,22 @@ const getCurrentUser = (req, res, next) => { // получение текуще�
     });
 };
 
-const getUser = (req, res, next) => { // получение пользователя по айдишнику
-  const { userId } = req.params;
-  User.findById(userId)
-    .orFail(() => new Error('NotFound'))
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Переданы некорректные данные для получения пользователя'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
-      } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
-      }
-    });
-};
+const getUser = (req, res, next) => User.findById(req.params.id)
+  .orFail(() => {
+    const error = new Error();
+    error.statusCode = 404;
+    throw error;
+  })
+  .then((user) => res.send(user))
+  .catch((error) => {
+    if (error.name === 'CastError') {
+      next(new BadRequest('Переданы некорректные данные для получения пользователя'));
+    } else if (error.statusCode === 404) {
+      next(new NotFoundError('Пользователь с указанным _id не найден'));
+    } else {
+      next(new ServerError('Внутренняя ошибка сервера'));
+    }
+  });
 
 const createUser = (req, res, next) => { // создание пользователя
   const {
@@ -94,9 +93,9 @@ const login = (req, res, next) => { // авторизация(получение
     });
 };
 
-const changeUserInfo = (req, res, next) => { // изменение информации пользователя
+const changeUserInfo = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate({ name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new Error();
       error.statusCode = 404;

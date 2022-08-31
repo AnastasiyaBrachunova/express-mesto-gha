@@ -4,11 +4,9 @@ const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
 
-const getCards = (req, res) => Card.find({})
+const getCards = (req, res, next) => Card.find({})
   .then((cards) => res.send({ data: cards }))
-  .catch((error) => {
-    res.status(500).send({ message: `Internal server error ${error}` });
-  });
+  .catch(next);
 
 const createCards = (req, res, next) => {
   const { name, link } = req.body;
@@ -78,7 +76,7 @@ const deleteCard = (req, res, next) => {
       throw error;
     })
     .then((card) => {
-      if (req.user._id !== card.owner._id) {
+      if (req.user._id !== card.owner._id.toString()) {
         next(new NotFoundError('Удаление чужой карточки недоступно'));
       }
     })

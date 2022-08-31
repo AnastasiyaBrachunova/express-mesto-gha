@@ -9,14 +9,14 @@ const {
 } = require('../controllers/users');
 
 const {
-  validateGetUsers,
+  validateGetUser,
   validateChangeUserInfo,
   validateChangeAvatar,
 } = require('../errors/validatorJoi');
 
-router.get('/users', validateGetUsers, getUsers); // показать всех пользователей
+router.get('/users', getUsers); // показать всех пользователей
 router.get('/users/me', getCurrentUser); // получить авторизованного пользователя
-router.get('/users/:id', getUser); // получить пользователя по айди
+router.get('/users/:id', validateGetUser, getUser); // получить пользователя по айди
 router.patch('/users/me', validateChangeUserInfo, changeUserInfo); // обновить информцию пользователя
 router.patch('/users/me/avatar', validateChangeAvatar, changeAvatar); // обновить аватар пользователя
 

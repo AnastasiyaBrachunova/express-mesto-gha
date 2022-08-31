@@ -17,7 +17,7 @@ const validateLogin = celebrate({ // signin
   }),
 });
 
-const validateGetUsers = celebrate({ // получить по айди ПОЛЬЗОВАТЕЛЯ
+const validateGetUser = celebrate({ // получить по айди ПОЛЬЗОВАТЕЛЯ
   params: Joi.object().keys({
     userId: Joi.string().hex().length(24),
   }),
@@ -52,7 +52,7 @@ const validateСreateCards = celebrate({ // создать карточку
 module.exports = {
   validateCreateUser,
   validateLogin,
-  validateGetUsers,
+  validateGetUser,
   validateChangeUserInfo,
   validateChangeAvatar,
   validateСreateCards,
