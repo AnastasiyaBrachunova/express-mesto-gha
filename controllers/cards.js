@@ -2,7 +2,7 @@ const Card = require('../models/card'); // экспортироали модел
 
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
-const ServerError = require('../errors/ServerError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 const getCards = (req, res, next) => Card.find({})
   .then((cards) => res.send({ data: cards }))
@@ -16,7 +16,7 @@ const createCards = (req, res, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании карточки'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
@@ -39,7 +39,7 @@ const likeCard = (req, res, next) => {
       } else if (error.statusCode === 404) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
@@ -62,14 +62,14 @@ const dislikeCard = (req, res, next) => {
       } else if (error.statusCode === 404) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .orFail(() => {
       const error = new Error();
       error.statusCode = 404;
@@ -77,11 +77,14 @@ const deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (req.user._id !== card.owner._id.toString()) {
-        next(new NotFoundError('Удаление чужой карточки недоступно'));
+        next(new ForbiddenError('Удаление чужой карточки недоступно'));
+      } else {
+        Card.findByIdAndRemove(cardId)
+          // eslint-disable-next-line no-shadow
+          .then(() => {
+            res.send({ message: 'Карточка успешно удалена' });
+          });
       }
-    })
-    .then((card) => {
-      res.send({ message: `Карточка c ${card.id} успешно удалена` });
     })
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -89,7 +92,7 @@ const deleteCard = (req, res, next) => {
       } else if (error.statusCode === 404) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };

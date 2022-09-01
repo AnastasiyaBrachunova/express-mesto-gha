@@ -5,8 +5,7 @@ const User = require('../models/user');
 
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
-const ServerError = require('../errors/ServerError');
-const AuthorizationError = require('../errors/ServerError');
+const AuthorizationError = require('../errors/AuthorizationError');
 
 const SALT_ROUNDS = 10;
 
@@ -27,27 +26,30 @@ const getCurrentUser = (req, res, next) => { // получение текуще�
       } else if (err.message === 'NotFound') {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(err);
       }
     });
 };
 
-const getUser = (req, res, next) => User.findById(req.params.id)
-  .orFail(() => {
-    const error = new Error();
-    error.statusCode = 404;
-    throw error;
-  })
-  .then((user) => res.send(user))
-  .catch((error) => {
-    if (error.name === 'CastError') {
-      next(new BadRequest('Переданы некорректные данные для получения пользователя'));
-    } else if (error.statusCode === 404) {
-      next(new NotFoundError('Пользователь с указанным _id не найден'));
-    } else {
-      next(new ServerError('Внутренняя ошибка сервера'));
-    }
-  });
+const getUser = (req, res, next) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(() => {
+      const error = new Error();
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new BadRequest('Переданы некорректные данные для получения пользователя'));
+      } else if (error.statusCode === 404) {
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
+      } else {
+        next(error);
+      }
+    });
+};
 
 const createUser = (req, res, next) => { // создание пользователя
   const {
@@ -60,14 +62,14 @@ const createUser = (req, res, next) => { // создание пользоват�
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then(() => res.status(201).send({ message: 'Пользователь успешно создан!' }))
+    .then(() => res.status(201).send({ message: `Пользователь ${email} успешно создан!` }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
       } else if (error.code === 11000) {
         res.status(409).send({ message: 'Такой пользователь уже существует' });
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
@@ -81,15 +83,11 @@ const login = (req, res, next) => { // авторизация(получение
         httpOnly: true,
         sameSite: true,
       }).send({ token });
+    }).catch(() => {
+      next(new AuthorizationError('Ошибка авторизации'));
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные при создании пользователя'));
-      } else if (error.code === 401) {
-        next(new AuthorizationError('Ошибка авторизации'));
-      } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
-      }
+      next(error);
     });
 };
 
@@ -108,7 +106,7 @@ const changeUserInfo = (req, res, next) => {
       } else if (error.statusCode === 404) {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
@@ -128,7 +126,7 @@ const changeAvatar = (req, res, next) => { // изменение аватара
       } else if (error.statusCode === 404) {
         next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
-        next(new ServerError('Внутренняя ошибка сервера'));
+        next(error);
       }
     });
 };
