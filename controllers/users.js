@@ -18,15 +18,13 @@ const getUsers = (req, res, next) => User.find({}) // получение все�
 const getCurrentUser = (req, res, next) => { // получение текущего (авторизованного) пользователя
   const userId = req.user._id;
   User.findById(userId)
-    .orFail(() => new Error('NotFound'))
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequest('Переданы некорректные данные для получения пользователя'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
         next(err);
       }
@@ -36,17 +34,11 @@ const getCurrentUser = (req, res, next) => { // получение текуще�
 const getUser = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
-    .orFail(() => {
-      const error = new Error();
-      error.statusCode = 404;
-      throw error;
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => res.send(user))
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new BadRequest('Переданы некорректные данные для получения пользователя'));
-      } else if (error.statusCode === 404) {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
         next(error);
       }
@@ -87,26 +79,17 @@ const login = (req, res, next) => { // авторизация(получение
       }).send({ token });
     }).catch(() => {
       next(new AuthorizationError('Ошибка авторизации'));
-    })
-    .catch((error) => {
-      next(error);
     });
 };
 
 const changeUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => {
-      const error = new Error();
-      error.statusCode = 404;
-      throw error;
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((users) => res.send(users))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении данных пользователя'));
-      } else if (error.statusCode === 404) {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
         next(error);
       }
@@ -116,17 +99,11 @@ const changeUserInfo = (req, res, next) => {
 const changeAvatar = (req, res, next) => { // изменение аватара
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(() => {
-      const error = new Error();
-      error.statusCode = 404;
-      throw error;
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((ava) => res.send(ava))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
-      } else if (error.statusCode === 404) {
-        next(new NotFoundError('Пользователь с указанным _id не найден'));
       } else {
         next(error);
       }

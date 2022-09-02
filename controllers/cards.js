@@ -66,7 +66,7 @@ const deleteCard = (req, res, next) => {
         // eslint-disable-next-line no-shadow
           .then(() => {
             res.send({ message: 'Карточка успешно удалена' });
-          });
+          }).catch(next);
       }
     }).catch((error) => {
       if (error.name === 'CastError') {
