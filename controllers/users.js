@@ -4,10 +4,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const BadRequest = require('../errors/BadRequest');
-
 const NotFoundError = require('../errors/NotFoundError');
-
 const AuthorizationError = require('../errors/AuthorizationError');
+const ConflictError = require('../errors/AuthorizationError');
 
 const SALT_ROUNDS = 10;
 
@@ -49,9 +48,6 @@ const createUser = (req, res, next) => { // создание пользоват�
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) {
-    next(new BadRequest('Email или пароль не могут быть пустыми'));
-  }
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -61,7 +57,7 @@ const createUser = (req, res, next) => { // создание пользоват�
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
       } else if (error.code === 11000) {
-        res.status(409).send({ message: 'Такой пользователь уже существует' });
+        next(new ConflictError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(error);
       }
