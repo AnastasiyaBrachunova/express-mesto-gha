@@ -8,7 +8,6 @@ const NotFoundError = require('../errors/NotFoundError');
 const AuthorizationError = require('../errors/AuthorizationError');
 const ConflictError = require('../errors/AuthorizationError');
 
-
 const SALT_ROUNDS = 10;
 
 const getUsers = (req, res, next) => User.find({}) // получение всех пользователей
