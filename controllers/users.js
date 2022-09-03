@@ -6,9 +6,9 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const AuthorizationError = require('../errors/AuthorizationError');
-const ConflictError = require('../errors/AuthorizationError');
+// const ConflictError = require('../errors/AuthorizationError');
 
-// const SALT_ROUNDS = 10;
+const SALT_ROUNDS = 10;
 
 const getUsers = (req, res, next) => User.find({}) // получение всех пользователей
   .then((users) => res.send(users))
@@ -44,52 +44,22 @@ const getUser = (req, res, next) => {
     });
 };
 
-// const createUser = (req, res, next) => { // создание пользователя
-//   const {
-//     name, about, avatar, email, password,
-//   } = req.body;
-//   if (!email || !password) {
-//     next(new BadRequest('Email или пароль не могут быть пустыми'));
-//   }
-//   bcrypt.hash(password, SALT_ROUNDS)
-//     .then((hash) => User.create({
-//       name, about, avatar, email, password: hash,
-//     }))
-//     .then((user) => res.status(201).send(user.deletePasswordFromUser()))
-//     .catch((error) => {
-//       if (error.name === 'ValidationError') {
-//         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
-//       } else if (error.code === 11000) {
-//         res.status(409).send({ message: 'Такой пользователь уже существует' });
-//       } else {
-//         next(error);
-//       }
-//     });
-// };
-
-const createUser = (req, res, next) => {
+const createUser = (req, res, next) => { // создание пользователя
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt
-    .hash(password, 10)
+  bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
+      name, about, avatar, email, password: hash,
     }))
-    .then((user) => {
-      res.send(user.deletePasswordFromUser());
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+    .then((user) => res.status(201).send(user.deletePasswordFromUser()))
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
-      } else if (err.name === 'MongoServerError' && err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (error.code === 11000) {
+        res.status(409).send({ message: 'Такой пользователь уже существует' });
       } else {
-        next(err);
+        next(error);
       }
     });
 };
