@@ -6,14 +6,14 @@ const validateCreateUser = celebrate({ // signup
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(/https?:\/\/\S+\.\S+/),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(),
+    password: Joi.string().required().min(6),
   }),
 });
 
 const validateLogin = celebrate({ // signin
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(),
+    password: Joi.string().required().min(6),
   }),
 });
 
