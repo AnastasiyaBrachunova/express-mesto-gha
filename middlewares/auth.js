@@ -16,9 +16,9 @@ const auth = (req, res, next) => {
     next(new AuthorizationError('Ошибка авторизации'));
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload; // записываем пейлоуд
 
-  next(); // пропускаем запрос дальше
+  next(); // пропускаем запрос lfltt
 };
 
 module.exports = auth;
