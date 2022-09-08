@@ -64,15 +64,26 @@ const createUser = (req, res, next) => { // создание пользоват�
     });
 };
 
+// const login = (req, res, next) => { // авторизация(получение токена)
+//   const { email, password } = req.body;
+//   return User.findUserByCredentials(email, password)
+//     .then((user) => {
+//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//       res.cookie('jwt', token, {
+//         httpOnly: true,
+//         sameSite: true,
+//       }).send({ token });
+//     }).catch(() => {
+//       next(new AuthorizationError('Ошибка авторизации'));
+//     });
+// };
+
 const login = (req, res, next) => { // авторизация(получение токена)
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        sameSite: true,
-      }).send({ token });
+      res.send({ token });
     }).catch(() => {
       next(new AuthorizationError('Ошибка авторизации'));
     });
