@@ -14,22 +14,6 @@ const getUsers = (req, res, next) => User.find({}) // получение все�
   .then((users) => res.send(users))
   .catch(next);
 
-const getCurrentUser = (req, res, next) => { // получение текущего (авторизованного) пользователя
-  const userId = req.user._id;
-  User.findById(userId)
-    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Переданы некорректные данные для получения пользователя'));
-      } else {
-        next(err);
-      }
-    });
-};
-
 const getUser = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
@@ -77,12 +61,27 @@ const createUser = (req, res, next) => { // создание пользоват�
 //       next(new AuthorizationError('Ошибка авторизации'));
 //     });
 // };
+const getCurrentUser = (req, res, next) => { // получение текущего (авторизованного) пользователя
+  const userId = req.user._id;
+  User.findById(userId)
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Переданы некорректные данные для получения пользователя'));
+      } else {
+        next(err);
+      }
+    });
+};
 
 const login = (req, res, next) => { // авторизация(получение токена)
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'veryhiddensecretfullofsecrets', { expiresIn: '7d' });
       res.send({ token });
     }).catch(() => {
       next(new AuthorizationError('Ошибка авторизации'));
