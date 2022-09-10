@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const express = require('express'); // импортировали экспресс
 const cookieParser = require('cookie-parser');
@@ -41,6 +43,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(requestLogger); // ЛОГГЕР ЗАПРОСОВ
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.use('/', authRouter); // здесь роуты signup/signin
 app.use(auth); // защита роутов авторизацией
