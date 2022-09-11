@@ -27,6 +27,7 @@ const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
+  console.log(authorization);
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     res
@@ -36,6 +37,7 @@ const auth = (req, res, next) => {
   }
 
   const token = authorization.replace('Bearer ', '');
+  console.log(token);
 
   let payload;
 
