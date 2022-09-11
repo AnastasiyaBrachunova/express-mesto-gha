@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const express = require('express'); // импортировали экспресс
 const cookieParser = require('cookie-parser');
@@ -23,7 +25,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const options = {
   origin: [
-    'http://localhost:3010', // порт где крутится фронт
+    'localhost:3010', // порт где крутится фронт
     'https://abrachunova.front.nomoredomains.sbs', // созданный домен для фронта
     'https://AnastasiyaBrachunova.github.io', // мой личный акк гита?
   ],
