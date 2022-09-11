@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../errors/AuthorizationError');
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 // // eslint-disable-next-line consistent-return
 // const auth = (req, res, next) => {
@@ -25,6 +25,8 @@ const { NODE_ENV } = process.env;
 
 // module.exports = auth;
 
+console.log(JWT_SECRET);
+
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -35,7 +37,10 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzFlMjMzNzYzOTBhNDAwMTQ2OTg4ZmUiLCJpYXQiOjE2NjI5MTk1Mjd9.MCmJExp6U2cEJUueOX37ThLL3IU2IUoaIvCZoLtZgCc' : 'dev-secret');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+
+    console.log('front', token);
+    console.log('Setver', JWT_SECRET);
   } catch (err) {
     next(new AuthorizationError('Ошибка авторизации - 1'));
   }
