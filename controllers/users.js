@@ -9,7 +9,7 @@ const AuthorizationError = require('../errors/AuthorizationError');
 const ConflictError = require('../errors/ConflictError');
 
 const SALT_ROUNDS = 10;
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV } = process.env;
 
 const getUsers = (req, res, next) => User.find({}) // получение всех пользователей
   .then((users) => res.send(users))
@@ -84,7 +84,7 @@ const login = (req, res, next) => { // авторизация(получение
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        NODE_ENV === 'production' ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzFlMjMzNzYzOTBhNDAwMTQ2OTg4ZmUiLCJpYXQiOjE2NjI5MTk1Mjd9.MCmJExp6U2cEJUueOX37ThLL3IU2IUoaIvCZoLtZgCc' : 'dev-secret',
         { expiresIn: '7d' },
       );
       res.send({ token });

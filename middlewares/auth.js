@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../errors/AuthorizationError');
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV } = process.env;
 
 // // eslint-disable-next-line consistent-return
 // const auth = (req, res, next) => {
@@ -35,7 +35,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'dev-secret');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzFlMjMzNzYzOTBhNDAwMTQ2OTg4ZmUiLCJpYXQiOjE2NjI5MTk1Mjd9.MCmJExp6U2cEJUueOX37ThLL3IU2IUoaIvCZoLtZgCc' : 'dev-secret');
   } catch (err) {
     next(new AuthorizationError('Ошибка авторизации - 1'));
   }
