@@ -26,12 +26,12 @@ const AuthorizationError = require('../errors/AuthorizationError');
 // module.exports = auth;
 
 const auth = (req, res, next) => {
-  const { Authorization } = req.headers;
-  if (!Authorization || !Authorization.startsWith('Bearer ')) {
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     next(new AuthorizationError('Ошибка авторизации'));
   }
 
-  const token = Authorization.replace('Bearer ', '');
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
