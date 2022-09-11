@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const mongoose = require('mongoose');
 const express = require('express'); // импортировали экспресс
 const cookieParser = require('cookie-parser');
