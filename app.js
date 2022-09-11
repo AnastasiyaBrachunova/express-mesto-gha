@@ -48,8 +48,8 @@ app.get('/crash-test', () => {
 
 app.use('/', authRouter); // здесь роуты signup/signin
 app.use(auth); // защита роутов авторизацией
-app.use('/', usersRouter);
-app.use('/', cardsRouter);
+app.use('/', auth, usersRouter);
+app.use('/', auth, cardsRouter);
 
 app.use(errorLogger); // ЛОГГЕР ОШИБОК
 
