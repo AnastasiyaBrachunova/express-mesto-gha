@@ -26,7 +26,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const options = {
   origin: [
     'http://localhost:3010', // порт где крутится фронт
-    'https://api.abrachunova.front.nomoredomains.sbs', // созданный домен для бека
+    'https://abrachunova.front.nomoredomains.sbs', // созданный домен для фронта
     'https://AnastasiyaBrachunova.github.io', // мой личный акк гита?
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],

@@ -26,12 +26,12 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 // module.exports = auth;
 
 const auth = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  const { Authorization } = req.headers;
+  if (!Authorization || !Authorization.startsWith('Bearer ')) {
     next(new AuthorizationError('Ошибка авторизации'));
   }
 
-  const token = authorization.replace('Bearer ', '');
+  const token = Authorization.replace('Bearer ', '');
   let payload;
 
   try {
