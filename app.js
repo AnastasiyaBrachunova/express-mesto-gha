@@ -19,7 +19,7 @@ const internalError = require('./errors/internalError');
 
 const app = express(); // создали приложение
 
-const { PORT = 3010 } = process.env;
+const { PORT = 3000 } = process.env;
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
