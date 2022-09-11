@@ -25,8 +25,6 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 // module.exports = auth;
 
-console.log(JWT_SECRET);
-
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -35,12 +33,11 @@ const auth = (req, res, next) => {
 
   const token = authorization.replace('Bearer ', '');
   let payload;
+  console.log('front', token);
+  console.log('Setver', JWT_SECRET);
 
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
-
-    console.log('front', token);
-    console.log('Setver', JWT_SECRET);
   } catch (err) {
     next(new AuthorizationError('Ошибка авторизации - 1'));
   }
