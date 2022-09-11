@@ -43,7 +43,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const allowedCors = [
   'https://abrachunova.front.nomoredomains.sbs',
   'https://AnastasiyaBrachunova.github.io',
-  'localhost:3010'];
+  'http://localhost:3010'];
 
 app.use((req, res, next) => {
   const { origin } = req.headers;
