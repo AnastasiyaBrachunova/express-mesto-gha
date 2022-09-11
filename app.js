@@ -29,7 +29,7 @@ const options = {
     'https://abrachunova.front.nomoredomains.sbs', // созданный домен для фронта
     'https://AnastasiyaBrachunova.github.io', // мой личный акк гита?
   ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
