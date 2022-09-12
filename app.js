@@ -24,7 +24,11 @@ const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const options = {
-
+  origin: [
+    'http://localhost:3010',
+    'https://abrachunova.front.nomoredomains.sbs',
+    'https://AnastasiyaBrachunova.github.io',
+  ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
