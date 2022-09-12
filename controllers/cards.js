@@ -27,7 +27,7 @@ const likeCard = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail(() => new NotFoundError('Карточка с указанным _id не найдена'))
-    .then((like) => res.send(like)
+    .then((like) => res.send(like))
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new BadRequest('Переданы некорректные данные для лайка'));
@@ -44,7 +44,7 @@ const dislikeCard = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail(() => new NotFoundError('Карточка с указанным _id не найдена'))
-    .then((like) => res.send(like)
+    .then((like) => res.send(like))
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new BadRequest('Переданы некорректные данные для дизлайка'));
